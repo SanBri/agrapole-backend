@@ -3,6 +3,9 @@ import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
 
+import usersRoute from "./routes/api/users.js";
+import authRoute from "./routes/api/auth.js";
+
 dotenv.config();
 
 // Start Express Server
@@ -27,3 +30,7 @@ connectDB();
 // Init Middleware
 app.use(express.json());
 app.use(cors());
+
+// Define Routes
+app.use("/api/users", usersRoute);
+app.use("/api/auth", authRoute);
