@@ -1,5 +1,6 @@
 import express from "express";
 import { check, validationResult } from "express-validator";
+import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import config from "config";
 
@@ -28,7 +29,10 @@ router.post(
   "/",
   [
     check("mail", "Merci d'entrer une adresse mail valide").isEmail(),
-    check("password", "Veuillez entrer votre mot de passe").exists(),
+    check("password", "Veuillez entrer votre mot de passe")
+      .not()
+      .isEmpty()
+      .exists(),
   ],
   async (req, res) => {
     const errors = validationResult(req);

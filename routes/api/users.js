@@ -12,66 +12,64 @@ const router = express.Router();
 // @route  POST api/users
 // @desc   Register user
 // @access Pubic
-router.post(
-  "/",
-  [
-    check("firstname", "Veuillez entrer un prénom").not().isEmpty(),
-    check("lastname", "Veuillez entrer un nom de famille").not().isEmpty(),
-    check("mail", "Merci d'entrer une adresse mail valide").isEmail(),
-    check(
-      "password",
-      "Le mot de passe doit contenir au moins 8 caractères"
-    ).isLength({ min: 8 }),
-  ],
-  async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
+// router.post(
+//   "/",
+//   [
+//     check("name", "Veuillez entrer un nom").not().isEmpty(),
+//     check("mail", "Merci d'entrer une adresse mail valide").isEmail(),
+//     check(
+//       "password",
+//       "Le mot de passe doit contenir au moins 8 caractères"
+//     ).isLength({ min: 8 }),
+//   ],
+//   async (req, res) => {
+//     const errors = validationResult(req);
+//     if (!errors.isEmpty()) {
+//       return res.status(400).json({ errors: errors.array() });
+//     }
 
-    const { firstname, lastname, mail, password } = req.body;
-    try {
-      let user = await User.findOne({ mail });
-      if (user) {
-        return res
-          .status(400)
-          .json({ errors: [{ msg: "Cette adresse mail est déjà utilisée" }] });
-      }
+//     const { name, mail, password } = req.body;
+//     try {
+//       let user = await User.findOne({ mail });
+//       if (user) {
+//         return res
+//           .status(400)
+//           .json({ errors: [{ msg: "Cette adresse mail est déjà utilisée" }] });
+//       }
 
-      // Create new object
-      user = new User({
-        firstname,
-        lastname,
-        mail,
-        password,
-      });
+//       // Create new object
+//       user = new User({
+//         name,
+//         mail,
+//         password,
+//       });
 
-      // Password Crypt
-      const salt = await bcrypt.genSalt(10);
-      user.password = await bcrypt.hash(password, salt);
+//       // Password Crypt
+//       const salt = await bcrypt.genSalt(10);
+//       user.password = await bcrypt.hash(password, salt);
 
-      await user.save();
-      const payload = {
-        user: {
-          id: user.id,
-        },
-      };
+//       await user.save();
+//       const payload = {
+//         user: {
+//           id: user.id,
+//         },
+//       };
 
-      jwt.sign(
-        payload,
-        config.get("jwtSecret"),
-        { expiresIn: 36000 },
-        (err, token) => {
-          if (err) throw err;
-          res.json({ token });
-        }
-      );
-    } catch (err) {
-      console.log(err.message);
-      res.status(500).send("Server error");
-    }
-  }
-);
+//       jwt.sign(
+//         payload,
+//         config.get("jwtSecret"),
+//         { expiresIn: 36000 },
+//         (err, token) => {
+//           if (err) throw err;
+//           res.json({ token });
+//         }
+//       );
+//     } catch (err) {
+//       console.log(err.message);
+//       res.status(500).send("Server error");
+//     }
+//   }
+// );
 
 // @route   PUT api/users/settings/:id
 // @desc    Change password & email
