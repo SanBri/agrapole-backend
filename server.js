@@ -5,6 +5,7 @@ import cors from "cors";
 
 import usersRoute from "./routes/api/users.js";
 import authRoute from "./routes/api/auth.js";
+import pdfCardsRoute from "./routes/api/pdfCards.js";
 
 dotenv.config();
 
@@ -34,3 +35,4 @@ app.use(cors());
 // Define Routes
 app.use("/api/users", usersRoute);
 app.use("/api/auth", authRoute);
+app.use("/api/pdfCards", pdfCardsRoute);
