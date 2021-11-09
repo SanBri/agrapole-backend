@@ -45,6 +45,22 @@ router.post(
   }
 );
 
+// @route   GET api/pdfCards/:block
+// @desc    Get pdfCards of a block
+// @access  Public
+router.get("/:block", async (req, res) => {
+  try {
+    const pdfCards = await PDFCard.find().where({ block: req.params.block });
+    if (!pdfCards) {
+      res.status(404).send("Aucune carte PDF");
+    }
+    res.status(200).send(pdfCards);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server Error");
+  }
+});
+
 // @route   DELETE api/pdfCards/:id
 // @desc    Delete a PDFCard
 // @access  Private
