@@ -61,6 +61,25 @@ router.get("/:block", async (req, res) => {
   }
 });
 
+// @route   GET api/pdfCards/pdfCard/:id
+// @desc    Get a pdfCard by ID
+// @access  Public
+router.get("/pdfCard/:id", async (req, res) => {
+  try {
+    const pdfCard = await PDFCard.findById(req.params.id);
+    if (!pdfCard) {
+      return res.status(404).json({ msg: "Carte PDF introuvable" });
+    }
+    res.json(pdfCard);
+  } catch (err) {
+    console.error(err.message);
+    if (err.kind === "ObjectId") {
+      return res.status(404).json({ msg: "Carte PDF introuvable" });
+    }
+    res.status(500).send("Server Error");
+  }
+});
+
 // @route   PUT api/pdfCards/:id
 // @desc    Edit a PDFCard
 // @access  Private
