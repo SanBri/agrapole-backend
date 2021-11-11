@@ -37,7 +37,7 @@ router.post(
     try {
       const newPDFCard = new PDFCard(pdfCardsFields);
       await newPDFCard.save();
-      res.json("Carte PDF ajoutée");
+      res.json(newPDFCard);
     } catch (err) {
       console.error(err.message);
       res.status(500).send("Server Error");
