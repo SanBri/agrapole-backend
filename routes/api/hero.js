@@ -49,18 +49,16 @@ const router = express.Router();
 //   }
 // );
 
-// @route   GET api/catchphraseCards/:description
-// @desc    Get catchphraseCards of a description
+// @route   GET api/hero/
+// @desc    Get Hero
 // @access  Public
-router.get("/:description", async (req, res) => {
+router.get("/", async (_, res) => {
   try {
-    const catchphraseCards = await catchphraseCard
-      .find()
-      .where({ description: req.params.description });
-    if (!catchphraseCards) {
-      res.status(404).send("Aucune carte catchphrase");
+    const hero = await Hero.findOne().where({ name: "hero" });
+    if (!hero) {
+      res.status(404).send("Hero introuvable");
     }
-    res.status(200).send(catchphraseCards);
+    res.status(200).send(hero);
   } catch (err) {
     console.error(err.message);
     res.status(500).send("Server Error");
@@ -91,13 +89,13 @@ router.put(
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
     }
-    const { title, catchprase, description } = req.body;
+    const { title, catchphrase, description } = req.body;
     const heroFields = {};
     heroFields.title = title;
-    heroFields.catchprase = catchprase;
+    heroFields.catchphrase = catchphrase;
     heroFields.description = description;
     if (title) heroFields.title = title;
-    if (catchprase) heroFields.catchprase = catchprase;
+    if (catchphrase) heroFields.catchphrase = catchphrase;
     if (description) heroFields.description = description;
 
     try {
