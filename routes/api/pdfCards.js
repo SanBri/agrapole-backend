@@ -61,25 +61,6 @@ router.get("/pdfFile/", async (req, res) => {
     res.status(500).send("Server Error");
   }
 });
-// DELETE TEST
-router.delete("/pdfFile/", async (req, res) => {
-  try {
-    let file = "./public/PDF/dwayne_johnson_musculation.jpg";
-    if (fs.existsSync(file)) {
-      fs.unlinkSync(file),
-        (err) => {
-          console.log(err);
-        };
-      res.send("Fichier supprimé");
-    } else {
-      console.error("Fichier introuvable");
-      res.send("Fichier introuvable");
-    }
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send("Server Error");
-  }
-});
 
 const storage = multer.diskStorage({
   destination: "./public/PDF/",
@@ -240,7 +221,7 @@ router.put(
 );
 
 // @route   DELETE api/pdfCards/:id
-// @desc    Delete a PDFCard
+// @desc    Delete a PDFCard & its PDF File
 // @access  Private
 router.delete("/:id", auth, async (req, res) => {
   try {
@@ -249,6 +230,13 @@ router.delete("/:id", auth, async (req, res) => {
       return res.status(404).json({
         errors: [{ msg: "La carte PDF est introuvable" }],
       });
+    }
+    let file = `./public/PDF/${pdfCard.PDF}`;
+    if (fs.existsSync(file)) {
+      fs.unlinkSync(file),
+        (err) => {
+          console.log(err);
+        };
     }
     await pdfCard.remove();
     res.json("Carte PDF supprimée");
