@@ -1,5 +1,7 @@
 import express from "express";
 import { check, validationResult } from "express-validator";
+import fs from "fs";
+import multer from "multer";
 
 import auth from "../../middleware/auth.js";
 import PDFCard from "../../models/PDFCard.js";
@@ -26,7 +28,7 @@ router.post(
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
     }
-    const { title, PDF, block } = req.body;
+    const { title, PDF, block, PDFFile } = req.body;
     const pdfCardsFields = {};
     pdfCardsFields.title = title;
     pdfCardsFields.PDF = PDF;
@@ -34,6 +36,7 @@ router.post(
     if (title) pdfCardsFields.title = title;
     if (PDF) pdfCardsFields.PDF = PDF;
     if (block) pdfCardsFields.block = block;
+    PDFFile && console.log(PDFFile);
     try {
       const newPDFCard = new PDFCard(pdfCardsFields);
       await newPDFCard.save();
@@ -45,6 +48,110 @@ router.post(
   }
 );
 
+// TEST GET
+router.get("/pdfFile/", async (req, res) => {
+  try {
+    var data = fs.readFileSync("./public/PDF/CV_MEL.pdf");
+    res.contentType("application/pdf");
+    res.send(data);
+    // res.download("./public/PDF/dwayne_johnson_musculation.jpg");
+    // res.send("./public/PDF/dwayne_johnson_musculation.jpg");
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server Error");
+  }
+});
+// DELETE TEST
+router.delete("/pdfFile/", async (req, res) => {
+  try {
+    let file = "./public/PDF/dwayne_johnson_musculation.jpg";
+    if (fs.existsSync(file)) {
+      fs.unlinkSync(file),
+        (err) => {
+          console.log(err);
+        };
+      res.send("Fichier supprimé");
+    } else {
+      console.error("Fichier introuvable");
+      res.send("Fichier introuvable");
+    }
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server Error");
+  }
+});
+
+const storage = multer.diskStorage({
+  destination: "./public/PDF/",
+  filename: (req, file, cb) => {
+    cb(null, file.originalname);
+  },
+});
+
+const upload = multer({
+  storage: storage,
+  limits: { fileSize: 1000000 },
+}).single("pdfFile");
+
+// @route   POST api/pdfsCards/pdfFile/
+// @desc    Create a PDF File
+// @access  Private
+router.post("/pdfFile/", auth, (req, res) => {
+  try {
+    upload(req, res, () => {
+      let finalFileName = `./public/PDF/${req.body.newFileName}`;
+      fs.rename(
+        `./public/PDF/${req.file.originalname}`,
+        finalFileName,
+        (err) => {
+          if (err) console.log("ERROR: " + err);
+        }
+      );
+      res.send("File uploaded");
+    });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server Error");
+  }
+});
+
+// @route   PUT api/pdfsCards/pdfFile/:id
+// @desc    Replace a PDF File
+// @access  Private
+router.put("/pdfFile/:id", auth, async (req, res) => {
+  try {
+    const oldFile = await PDFCard.findById(req.params.id).select("PDF -_id");
+    if (!oldFile) {
+      console.log("Carte PDF introuvable");
+      return res.status(404).json({ msg: "Carte PDF introuvable" });
+    }
+    let filePath = `./public/PDF/${oldFile.PDF}`;
+    if (fs.existsSync(filePath)) {
+      fs.unlinkSync(filePath),
+        (err) => {
+          console.log(err);
+        };
+      res.send("Fichier supprimé");
+    } else {
+      console.error("Fichier introuvable");
+      res.send("Fichier introuvable");
+    }
+    upload(req, res, () => {
+      let finalFileName = `./public/PDF/${req.body.newFileName}`;
+      fs.rename(
+        `./public/PDF/${req.file.originalname}`,
+        finalFileName,
+        (err) => {
+          if (err) console.log("ERROR: " + err);
+        }
+      );
+    });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server Error");
+  }
+});
+
 // @route   GET api/pdfCards/:block
 // @desc    Get pdfCards of a block
 // @access  Public
@@ -52,7 +159,7 @@ router.get("/:block", async (req, res) => {
   try {
     const pdfCards = await PDFCard.find().where({ block: req.params.block });
     if (!pdfCards) {
-      res.status(404).send("Aucune carte PDF");
+      return res.status(404).send("Aucune carte PDF");
     }
     res.status(200).send(pdfCards);
   } catch (err) {
