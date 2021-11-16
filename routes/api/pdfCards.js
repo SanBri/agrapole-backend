@@ -48,85 +48,16 @@ router.post(
   }
 );
 
-// TEST GET
-router.get("/pdfFile/", async (req, res) => {
+// @route   GET api/pdfCards/
+// @desc    Get All pdfCards
+// @access  Public
+router.get("/", async (_, res) => {
   try {
-    var data = fs.readFileSync("./public/PDF/CV_MEL.pdf");
-    res.contentType("application/pdf");
-    res.send(data);
-    // res.download("./public/PDF/dwayne_johnson_musculation.jpg");
-    // res.send("./public/PDF/dwayne_johnson_musculation.jpg");
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send("Server Error");
-  }
-});
-
-const storage = multer.diskStorage({
-  destination: "./public/PDF/",
-  filename: (req, file, cb) => {
-    cb(null, file.originalname);
-  },
-});
-
-const upload = multer({
-  storage: storage,
-  limits: { fileSize: 1000000 },
-}).single("pdfFile");
-
-// @route   POST api/pdfsCards/pdfFile/
-// @desc    Create a PDF File
-// @access  Private
-router.post("/pdfFile/", auth, (req, res) => {
-  try {
-    upload(req, res, () => {
-      let finalFileName = `./public/PDF/${req.body.newFileName}`;
-      fs.rename(
-        `./public/PDF/${req.file.originalname}`,
-        finalFileName,
-        (err) => {
-          if (err) console.log("ERROR: " + err);
-        }
-      );
-      res.send("File uploaded");
-    });
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send("Server Error");
-  }
-});
-
-// @route   PUT api/pdfsCards/pdfFile/:id
-// @desc    Replace a PDF File
-// @access  Private
-router.put("/pdfFile/:id", auth, async (req, res) => {
-  try {
-    const oldFile = await PDFCard.findById(req.params.id).select("PDF -_id");
-    if (!oldFile) {
-      console.log("Carte PDF introuvable");
-      return res.status(404).json({ msg: "Carte PDF introuvable" });
+    const pdfCards = await PDFCard.find();
+    if (!pdfCards) {
+      return res.status(404).send("Aucune carte PDF");
     }
-    let filePath = `./public/PDF/${oldFile.PDF}`;
-    if (fs.existsSync(filePath)) {
-      fs.unlinkSync(filePath),
-        (err) => {
-          console.log(err);
-        };
-      res.send("Fichier supprimé");
-    } else {
-      console.error("Fichier introuvable");
-      res.send("Fichier introuvable");
-    }
-    upload(req, res, () => {
-      let finalFileName = `./public/PDF/${req.body.newFileName}`;
-      fs.rename(
-        `./public/PDF/${req.file.originalname}`,
-        finalFileName,
-        (err) => {
-          if (err) console.log("ERROR: " + err);
-        }
-      );
-    });
+    res.status(200).send(pdfCards);
   } catch (err) {
     console.error(err.message);
     res.status(500).send("Server Error");
@@ -219,6 +150,91 @@ router.put(
     }
   }
 );
+
+// @route   GET api/pdfsCards/pdfFile/:PDF
+// @desc    Get a PDF File
+// @access  Public
+router.get("/pdfFile/:PDF", async (req, res) => {
+  try {
+    var data = fs.readFileSync(`./public/PDF/${req.params.PDF}`);
+    res.contentType("application/pdf");
+    res.send(data);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server Error");
+  }
+});
+
+const storage = multer.diskStorage({
+  destination: "./public/PDF/",
+  filename: (req, file, cb) => {
+    cb(null, file.originalname);
+  },
+});
+
+const upload = multer({
+  storage: storage,
+  limits: { fileSize: 1000000 },
+}).single("pdfFile");
+
+// @route   POST api/pdfsCards/pdfFile/
+// @desc    Create a PDF File
+// @access  Private
+router.post("/pdfFile/", auth, (req, res) => {
+  try {
+    upload(req, res, () => {
+      let finalFileName = `./public/PDF/${req.body.newFileName}`;
+      fs.rename(
+        `./public/PDF/${req.file.originalname}`,
+        finalFileName,
+        (err) => {
+          if (err) console.log("ERROR: " + err);
+        }
+      );
+      res.send("File uploaded");
+    });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server Error");
+  }
+});
+
+// @route   PUT api/pdfsCards/pdfFile/:id
+// @desc    Replace a PDF File
+// @access  Private
+router.put("/pdfFile/:id", auth, async (req, res) => {
+  try {
+    const oldFile = await PDFCard.findById(req.params.id).select("PDF -_id");
+    if (!oldFile) {
+      console.log("Carte PDF introuvable");
+      return res.status(404).json({ msg: "Carte PDF introuvable" });
+    }
+    let filePath = `./public/PDF/${oldFile.PDF}`;
+    if (fs.existsSync(filePath)) {
+      fs.unlinkSync(filePath),
+        (err) => {
+          console.log(err);
+        };
+      res.send("Fichier supprimé");
+    } else {
+      console.error("Fichier introuvable");
+      res.send("Fichier introuvable");
+    }
+    upload(req, res, () => {
+      let finalFileName = `./public/PDF/${req.body.newFileName}`;
+      fs.rename(
+        `./public/PDF/${req.file.originalname}`,
+        finalFileName,
+        (err) => {
+          if (err) console.log("ERROR: " + err);
+        }
+      );
+    });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server Error");
+  }
+});
 
 // @route   DELETE api/pdfCards/:id
 // @desc    Delete a PDFCard & its PDF File
