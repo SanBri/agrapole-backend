@@ -7,6 +7,7 @@ import usersRoute from "./routes/api/users.js";
 import authRoute from "./routes/api/auth.js";
 import pdfCardsRoute from "./routes/api/pdfCards.js";
 import heroRoute from "./routes/api/hero.js";
+import partnersRoute from "./routes/api/partners.js";
 
 dotenv.config();
 
@@ -38,3 +39,4 @@ app.use("/api/users", usersRoute);
 app.use("/api/auth", authRoute);
 app.use("/api/pdfCards", pdfCardsRoute);
 app.use("/api/hero", heroRoute);
+app.use("/api/partners", partnersRoute);

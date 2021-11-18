@@ -28,7 +28,7 @@ router.post(
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
     }
-    const { title, PDF, block, PDFFile } = req.body;
+    const { title, PDF, block } = req.body;
     const pdfCardsFields = {};
     pdfCardsFields.title = title;
     pdfCardsFields.PDF = PDF;
@@ -36,7 +36,6 @@ router.post(
     if (title) pdfCardsFields.title = title;
     if (PDF) pdfCardsFields.PDF = PDF;
     if (block) pdfCardsFields.block = block;
-    PDFFile && console.log(PDFFile);
     try {
       const newPDFCard = new PDFCard(pdfCardsFields);
       await newPDFCard.save();
