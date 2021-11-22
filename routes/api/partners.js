@@ -52,4 +52,32 @@ router.post(
   }
 );
 
+// @route   DELETE api/partners/
+// @desc    Delete a Partner
+// @access  Private
+router.delete("/:id", auth, async (req, res) => {
+  try {
+    const partner = await Partner.findById(req.params.id);
+    if (!partner) {
+      return res.status(404).json({
+        errors: [{ msg: "Le partenaire est introuvable" }],
+      });
+    }
+    // let file = `./public/partner/${partner.image}`;
+    // if (fs.existsSync(file)) {
+    //   fs.unlinkSync(file),
+    //     (err) => {
+    //       console.log(err);
+    //     };
+    // }
+    await partner.remove();
+    res.json("Partenaire supprimé");
+  } catch (err) {
+    console.error(err.message);
+    if (err.kind === "ObjectId") {
+      return res.status(404).json({ msg: "Le partenaire est est introuvable" });
+    }
+    res.status(500).send("Server Error");
+  }
+});
 export default router;
