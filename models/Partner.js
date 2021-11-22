@@ -5,7 +5,7 @@ const PartnerSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  logo: {
+  image: {
     type: String,
   },
   url: {
