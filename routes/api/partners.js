@@ -2,6 +2,7 @@ import express from "express";
 import { check, validationResult } from "express-validator";
 import fs from "fs";
 import multer from "multer";
+import path from "path";
 
 import auth from "../../middleware/auth.js";
 import Partner from "../../models/Partner.js";
@@ -65,13 +66,13 @@ router.delete("/:id", auth, async (req, res) => {
         errors: [{ msg: "Le partenaire est introuvable" }],
       });
     }
-    // let file = `./public/partner/${partner.image}`;
-    // if (fs.existsSync(file)) {
-    //   fs.unlinkSync(file),
-    //     (err) => {
-    //       console.log(err);
-    //     };
-    // }
+    let file = `./public/partners/${partner.image}`;
+    if (fs.existsSync(file)) {
+      fs.unlinkSync(file),
+        (err) => {
+          console.log(err);
+        };
+    }
     await partner.remove();
     res.json("Partenaire supprimé");
   } catch (err) {
@@ -124,7 +125,11 @@ router.post("/logoFile/", auth, (req, res) => {
 router.get("/logoFile/:logo", (req, res) => {
   try {
     var data = fs.readFileSync(`./public/partners/${req.params.logo}`);
-    res.set("Content-Type", "image/jpeg");
+    if (path.extname(req.params.logo) == "jpg" || "jpeg") {
+      res.contentType("image/jpeg");
+    } else if (path.extname(req.params.logo) == "png") {
+      res.contentType("image/png");
+    }
     res.send(data);
   } catch (err) {
     console.error(err.message);
