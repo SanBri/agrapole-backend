@@ -1,5 +1,7 @@
 import express from "express";
 import { check, validationResult } from "express-validator";
+import fs from "fs";
+import multer from "multer";
 
 import auth from "../../middleware/auth.js";
 import Partner from "../../models/Partner.js";
@@ -81,3 +83,37 @@ router.delete("/:id", auth, async (req, res) => {
   }
 });
 export default router;
+
+const storage = multer.diskStorage({
+  destination: "./public/partners/",
+  filename: (req, file, cb) => {
+    cb(null, file.originalname);
+  },
+});
+
+const upload = multer({
+  storage: storage,
+  limits: { fileSize: 1000000 },
+}).single("logoFile");
+
+// @route   POST api/partners/logoFile/
+// @desc    Create a logo file
+// @access  Private
+router.post("/logoFile/", auth, (req, res) => {
+  try {
+    upload(req, res, () => {
+      let finalFileName = `./public/partners/${req.body.newFileName}`;
+      fs.rename(
+        `./public/partners/${req.file.originalname}`,
+        finalFileName,
+        (err) => {
+          if (err) console.log("ERROR: " + err);
+        }
+      );
+      res.send("File uploaded");
+    });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server Error");
+  }
+});
