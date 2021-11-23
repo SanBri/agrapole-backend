@@ -117,3 +117,17 @@ router.post("/logoFile/", auth, (req, res) => {
     res.status(500).send("Server Error");
   }
 });
+
+// @route   GET api/partners/logoFile/:logo
+// @desc    Get a logo file
+// @access  Public
+router.get("/logoFile/:logo", (req, res) => {
+  try {
+    var data = fs.readFileSync(`./public/partners/${req.params.logo}`);
+    res.set("Content-Type", "image/jpeg");
+    res.send(data);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server Error");
+  }
+});
