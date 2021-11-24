@@ -3,6 +3,7 @@ import { check, validationResult } from "express-validator";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import config from "config";
+import mongoose from "mongoose";
 
 import auth from "../../middleware/auth.js";
 import User from "../../models/User.js";
@@ -71,59 +72,24 @@ const router = express.Router();
 //   }
 // );
 
-// @route   PUT api/users/settings/:id
-// @desc    Change password & email
-// @access  Private
-router.put(
-  "/settings/:id",
-  [
-    auth,
-    [
-      check("mail", "Merci d'entrer une adresse mail valide").isEmail(),
-      check("oldPassword", "Veuillez entrer votre mot de passe").exists(),
-      check(
-        "newPassword",
-        "Le mot de passe doit contenir au moins 8 caractères"
-      ).isLength({ min: 8 }),
-    ],
-  ],
-  async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
-    const { mail, oldPassword, newPassword } = req.body;
-    try {
-      let user = await User.findOne({ _id: req.params.id });
-
-      if (user) {
-        const isMatch = await bcrypt.compare(oldPassword, user.password);
-        if (!isMatch) {
-          return res.status(400).json({
-            errors: [{ msg: "Le mot de passe est incorrect" }],
-          });
-        }
-
-        const salt = await bcrypt.genSalt(10);
-        let hashPassword = await bcrypt.hash(newPassword, salt);
-
-        (user = await User.findOneAndUpdate(
-          { _id: req.params.id },
-          { $set: { password: hashPassword, mail: mail } },
-          { new: true }
-        )),
-          await user.save();
-        res.json({ msg: "Vos informations ont bien été enregistrées" });
+// Check Password
+const checkPassword = async (id, password) => {
+  let isValidID = mongoose.Types.ObjectId.isValid(id); // Check ID for "cast fails error"
+  if (isValidID) {
+    let user = await User.findById(id);
+    if (user) {
+      const isMatch = await bcrypt.compare(password, user.password);
+      if (!isMatch) {
+        return "Le mot de passe est incorrect";
       } else {
-        return res.status(400).json({
-          errors: [{ msg: "Utilisateur introuvable" }],
-        });
+        return true;
       }
-    } catch (err) {
-      console.error(err.message);
-      res.status(500).send("Server Error");
+    } else {
+      return "Utilisateur introuvable";
     }
+  } else {
+    return "ID invalide";
   }
-);
+};
 
 export default router;
