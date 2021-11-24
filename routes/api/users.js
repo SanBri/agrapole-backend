@@ -92,4 +92,54 @@ const checkPassword = async (id, password) => {
   }
 };
 
+// @route   PUT api/users/password/:id
+// @desc    Change password
+// @access  Private
+router.put(
+  "/password/:id",
+  [
+    auth,
+    [
+      check("oldPassword", "Veuillez entrer votre mot de passe")
+        .not()
+        .isEmpty(),
+      check(
+        "newPassword",
+        "Le mot de passe doit contenir au moins 8 caractères"
+      ).isLength({ min: 8 }),
+    ],
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+    const { oldPassword, newPassword } = req.body;
+    try {
+      const isMatch = checkPassword(req.params.id, oldPassword);
+
+      isMatch.then(async (result) => {
+        if (result === true) {
+          const salt = await bcrypt.genSalt(10);
+          let hashPassword = await bcrypt.hash(newPassword, salt);
+          let user = await User.findOneAndUpdate(
+            { _id: req.params.id },
+            { $set: { password: hashPassword } },
+            { new: true }
+          );
+          await user.save();
+          res.json({ msg: "Le mot de passe a bien été modifié" });
+        } else {
+          return res.status(400).json({
+            errors: [{ msg: result }],
+          });
+        }
+      });
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).send("Server Error");
+    }
+  }
+);
+
 export default router;
