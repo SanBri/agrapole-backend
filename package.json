@@ -2,6 +2,9 @@
   "name": "agrapole-backend",
   "version": "1.0.0",
   "description": "",
+  "engines": {
+    "node": "14.16.1"
+  },
   "main": "server.js",
   "scripts": {
     "preinstall": "npm config set package-lock false",
