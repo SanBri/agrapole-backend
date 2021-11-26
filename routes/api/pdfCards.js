@@ -268,10 +268,10 @@ router.delete("/:id", auth, async (req, res) => {
   }
 });
 
-// @route   GET api/pdfsCards/pdfFile/:PDF
+// @route   GET api/pdfsCards/allPdfFile
 // @desc    Get a PDF File
 // @access  Public
-router.get("/pdfFile/all"),
+router.get("/allPdfFile"),
   async (req, res) => {
     try {
       const pdfFiles = [];
