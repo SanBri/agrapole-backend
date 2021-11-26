@@ -50,53 +50,53 @@ router.post(
 // @route   GET api/pdfCards/
 // @desc    Get All pdfCards
 // @access  Public
-// router.get("/", async (_, res) => {
-//   try {
-//     const pdfCards = await PDFCard.find();
-//     if (!pdfCards) {
-//       return res.status(404).send("Aucune carte PDF");
-//     }
-//     res.status(200).send(pdfCards);
-//   } catch (err) {
-//     console.error(err.message);
-//     res.status(500).send("Server Error");
-//   }
-// });
+router.get("/", async (_, res) => {
+  try {
+    const pdfCards = await PDFCard.find();
+    if (!pdfCards) {
+      return res.status(404).send("Aucune carte PDF");
+    }
+    res.status(200).send(pdfCards);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server Error");
+  }
+});
 
 // @route   GET api/pdfCards/:block
 // @desc    Get pdfCards of a block
 // @access  Public
-// router.get("/:block", async (req, res) => {
-//   try {
-//     const pdfCards = await PDFCard.find().where({ block: req.params.block });
-//     if (!pdfCards) {
-//       return res.status(404).send("Aucune carte PDF");
-//     }
-//     res.status(200).send(pdfCards);
-//   } catch (err) {
-//     console.error(err.message);
-//     res.status(500).send("Server Error");
-//   }
-// });
+router.get("/:block", async (req, res) => {
+  try {
+    const pdfCards = await PDFCard.find().where({ block: req.params.block });
+    if (!pdfCards) {
+      return res.status(404).send("Aucune carte PDF");
+    }
+    res.status(200).send(pdfCards);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server Error");
+  }
+});
 
 // @route   GET api/pdfCards/pdfCard/:id
 // @desc    Get a pdfCard by ID
 // @access  Public
-// router.get("/pdfCard/:id", async (req, res) => {
-//   try {
-//     const pdfCard = await PDFCard.findById(req.params.id);
-//     if (!pdfCard) {
-//       return res.status(404).json({ msg: "Carte PDF introuvable" });
-//     }
-//     res.json(pdfCard);
-//   } catch (err) {
-//     console.error(err.message);
-//     if (err.kind === "ObjectId") {
-//       return res.status(404).json({ msg: "Carte PDF introuvable" });
-//     }
-//     res.status(500).send("Server Error");
-//   }
-// });
+router.get("/pdfCard/:id", async (req, res) => {
+  try {
+    const pdfCard = await PDFCard.findById(req.params.id);
+    if (!pdfCard) {
+      return res.status(404).json({ msg: "Carte PDF introuvable" });
+    }
+    res.json(pdfCard);
+  } catch (err) {
+    console.error(err.message);
+    if (err.kind === "ObjectId") {
+      return res.status(404).json({ msg: "Carte PDF introuvable" });
+    }
+    res.status(500).send("Server Error");
+  }
+});
 
 // @route   PUT api/pdfCards/:id
 // @desc    Edit a PDFCard
@@ -204,22 +204,22 @@ router.post("/pdfFile/", auth, (req, res) => {
 router.put("/pdfFile/:id", auth, async (req, res) => {
   try {
     const oldFile = await PDFCard.findById(req.params.id).select("PDF -_id");
-    // console.log(oldFile.PDF);
-    // if (!oldFile) {
-    //   console.log("Carte PDF introuvable");
-    //   return res.status(404).json({ msg: "Carte PDF introuvable" });
-    // }
-    // let filePath = `./public/PDF/${oldFile.PDF}`;
-    // if (fs.existsSync(filePath)) {
-    //   fs.unlinkSync(filePath),
-    //     (err) => {
-    //       console.log(err);
-    //     };
-    //   res.send("Fichier supprimé");
-    // } else {
-    //   console.error("Fichier introuvable");
-    //   res.send("Fichier introuvable");
-    // }
+    console.log(oldFile.PDF);
+    if (!oldFile) {
+      console.log("Carte PDF introuvable");
+      return res.status(404).json({ msg: "Carte PDF introuvable" });
+    }
+    let filePath = `./public/PDF/${oldFile.PDF}`;
+    if (fs.existsSync(filePath)) {
+      fs.unlinkSync(filePath),
+        (err) => {
+          console.log(err);
+        };
+      res.send("Fichier supprimé");
+    } else {
+      console.error("Fichier introuvable");
+      res.send("Fichier introuvable");
+    }
     upload(req, res, () => {
       let finalFileName = `./public/PDF/${req.body.newFileName}`;
       fs.rename(
@@ -240,79 +240,53 @@ router.put("/pdfFile/:id", auth, async (req, res) => {
 // @route   DELETE api/pdfCards/:id
 // @desc    Delete a PDFCard & its PDF File
 // @access  Private
-// router.delete("/:id", auth, async (req, res) => {
-//   try {
-//     const pdfCard = await PDFCard.findById(req.params.id);
-//     if (!pdfCard) {
-//       return res.status(404).json({
-//         errors: [{ msg: "La carte PDF est introuvable" }],
-//       });
-//     }
-//     let file = `./public/PDF/${pdfCard.PDF}`;
-//     if (fs.existsSync(file)) {
-//       fs.unlinkSync(file),
-//         (err) => {
-//           console.log(err);
-//         };
-//     } else {
-//       console.log("Fichier introuvable");
-//     }
-//     await pdfCard.remove();
-//     res.json("Carte PDF supprimée");
-//   } catch (err) {
-//     console.error(err.message);
-//     if (err.kind === "ObjectId") {
-//       return res.status(404).json({ msg: "La carte PDF est introuvable" });
-//     }
-//     res.status(500).send("Server Error");
-//   }
-// });
-
-// @route   GET api/pdfCards/
-// @desc    GET all PDF Files
-// @access  Public
-router.get("/", async (req, res) => {
+router.delete("/:id", auth, async (req, res) => {
   try {
-    const folder = "./public/PDF/";
-    const PDFfiles = [];
-    fs.readdir(folder, (err, files) => {
-      console.log(err);
-      files.forEach((file) => {
-        console.log(file);
-        PDFfiles.push(file);
+    const pdfCard = await PDFCard.findById(req.params.id);
+    if (!pdfCard) {
+      return res.status(404).json({
+        errors: [{ msg: "La carte PDF est introuvable" }],
       });
-    });
-    setTimeout(() => {
-      console.log(PDFfiles);
-      console.log("OK");
-      res.json(PDFfiles);
-    }, 3000);
-  } catch (err) {
-    console.erro(err.message);
-    if (err.kind === "ObjectId") {
-      return res.status(404).json({ msg: "Les Fichiers sont introuvables" });
     }
+    let file = `./public/PDF/${pdfCard.PDF}`;
+    if (fs.existsSync(file)) {
+      fs.unlinkSync(file),
+        (err) => {
+          console.log(err);
+        };
+    } else {
+      console.log("Fichier introuvable");
+    }
+    await pdfCard.remove();
+    res.json("Carte PDF supprimée");
+  } catch (err) {
+    console.error(err.message);
+    if (err.kind === "ObjectId") {
+      return res.status(404).json({ msg: "La carte PDF est introuvable" });
+    }
+    res.status(500).send("Server Error");
   }
 });
-// @route   DELETE api/pdfCards/
+
+// @route   DELETE api/pdfCards/pdfFiles/
 // @desc    DELETE all PDF Files
 // @access  Public
-router.delete("/", async (req, res) => {
-  try {
-    const folder = "./public/PDF/";
-    fs.readdir(folder, (err, files) => {
-      console.log(err);
-      files.forEach((file) => {
-        fs.unlinkSync(file);
-      });
-    });
-    res.send("Les fichiers ont été supprimés");
-  } catch (err) {
-    console.erro(err.message);
-    if (err.kind === "ObjectId") {
-      return res.status(404).json({ msg: "Les Fichiers sont introuvables" });
-    }
-  }
-});
+// router.delete("/pdfFiles/", async (req, res) => {
+//   try {
+//     const folder = "./public/PDF/";
+//     fs.readdir(folder, (err, files) => {
+//       console.log(err);
+//       files.forEach((file) => {
+//         fs.unlinkSync(file);
+//       });
+//     });
+//     res.send("Les fichiers ont été supprimés");
+//   } catch (err) {
+//     console.erro(err.message);
+//     if (err.kind === "ObjectId") {
+//       return res.status(404).json({ msg: "Les Fichiers sont introuvables" });
+//     }
+//   }
+// });
 
 export default router;
