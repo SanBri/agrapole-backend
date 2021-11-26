@@ -254,6 +254,8 @@ router.delete("/:id", auth, async (req, res) => {
         (err) => {
           console.log(err);
         };
+    } else {
+      console.log("Fichier introuvable");
     }
     await pdfCard.remove();
     res.json("Carte PDF supprimée");
