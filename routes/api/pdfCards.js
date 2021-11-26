@@ -204,6 +204,7 @@ router.post("/pdfFile/", auth, (req, res) => {
 router.put("/pdfFile/:id", auth, async (req, res) => {
   try {
     const oldFile = await PDFCard.findById(req.params.id).select("PDF -_id");
+    console.log(oldFile.PDF);
     if (!oldFile) {
       console.log("Carte PDF introuvable");
       return res.status(404).json({ msg: "Carte PDF introuvable" });
@@ -228,6 +229,7 @@ router.put("/pdfFile/:id", auth, async (req, res) => {
           if (err) console.log("ERROR: " + err);
         }
       );
+      console.log("Fichier créé");
     });
   } catch (err) {
     console.error(err.message);
