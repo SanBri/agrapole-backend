@@ -50,53 +50,53 @@ router.post(
 // @route   GET api/pdfCards/
 // @desc    Get All pdfCards
 // @access  Public
-router.get("/", async (_, res) => {
-  try {
-    const pdfCards = await PDFCard.find();
-    if (!pdfCards) {
-      return res.status(404).send("Aucune carte PDF");
-    }
-    res.status(200).send(pdfCards);
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send("Server Error");
-  }
-});
+// router.get("/", async (_, res) => {
+//   try {
+//     const pdfCards = await PDFCard.find();
+//     if (!pdfCards) {
+//       return res.status(404).send("Aucune carte PDF");
+//     }
+//     res.status(200).send(pdfCards);
+//   } catch (err) {
+//     console.error(err.message);
+//     res.status(500).send("Server Error");
+//   }
+// });
 
 // @route   GET api/pdfCards/:block
 // @desc    Get pdfCards of a block
 // @access  Public
-router.get("/:block", async (req, res) => {
-  try {
-    const pdfCards = await PDFCard.find().where({ block: req.params.block });
-    if (!pdfCards) {
-      return res.status(404).send("Aucune carte PDF");
-    }
-    res.status(200).send(pdfCards);
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send("Server Error");
-  }
-});
+// router.get("/:block", async (req, res) => {
+//   try {
+//     const pdfCards = await PDFCard.find().where({ block: req.params.block });
+//     if (!pdfCards) {
+//       return res.status(404).send("Aucune carte PDF");
+//     }
+//     res.status(200).send(pdfCards);
+//   } catch (err) {
+//     console.error(err.message);
+//     res.status(500).send("Server Error");
+//   }
+// });
 
 // @route   GET api/pdfCards/pdfCard/:id
 // @desc    Get a pdfCard by ID
 // @access  Public
-router.get("/pdfCard/:id", async (req, res) => {
-  try {
-    const pdfCard = await PDFCard.findById(req.params.id);
-    if (!pdfCard) {
-      return res.status(404).json({ msg: "Carte PDF introuvable" });
-    }
-    res.json(pdfCard);
-  } catch (err) {
-    console.error(err.message);
-    if (err.kind === "ObjectId") {
-      return res.status(404).json({ msg: "Carte PDF introuvable" });
-    }
-    res.status(500).send("Server Error");
-  }
-});
+// router.get("/pdfCard/:id", async (req, res) => {
+//   try {
+//     const pdfCard = await PDFCard.findById(req.params.id);
+//     if (!pdfCard) {
+//       return res.status(404).json({ msg: "Carte PDF introuvable" });
+//     }
+//     res.json(pdfCard);
+//   } catch (err) {
+//     console.error(err.message);
+//     if (err.kind === "ObjectId") {
+//       return res.status(404).json({ msg: "Carte PDF introuvable" });
+//     }
+//     res.status(500).send("Server Error");
+//   }
+// });
 
 // @route   PUT api/pdfCards/:id
 // @desc    Edit a PDFCard
@@ -268,6 +268,31 @@ router.put("/pdfFile/:id", auth, async (req, res) => {
 //   }
 // });
 
+// @route   GET api/pdfCards/
+// @desc    GET all PDF Files
+// @access  Public
+router.get("/", async (req, res) => {
+  try {
+    const folder = "./public/PDF/";
+    const PDFfiles = [];
+    fs.readdir(folder, (err, files) => {
+      console.log(err);
+      files.forEach((file) => {
+        files.push(file);
+      });
+    });
+    setTimeout(() => {
+      console.log(PDFfiles);
+      console.log("OK");
+      res.json(PDFfiles);
+    }, 3000);
+  } catch (err) {
+    console.erro(err.message);
+    if (err.kind === "ObjectId") {
+      return res.status(404).json({ msg: "Les Fichiers sont introuvables" });
+    }
+  }
+});
 // @route   DELETE api/pdfCards/
 // @desc    DELETE all PDF Files
 // @access  Public
