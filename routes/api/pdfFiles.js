@@ -116,6 +116,7 @@ router.delete("/:id", auth, async (req, res) => {
           console.log(err);
         };
       console.log(`Fichier "${pdfCard.PDF}" supprimé `);
+      res.send(`Le fichier "${pdfCard.PDF}" a bien été supprimé`);
     } else {
       console.log("Fichier introuvable");
     }
