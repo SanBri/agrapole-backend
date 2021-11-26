@@ -278,7 +278,8 @@ router.get("/", async (req, res) => {
     fs.readdir(folder, (err, files) => {
       console.log(err);
       files.forEach((file) => {
-        files.push(file);
+        console.log(file);
+        PDFfiles.push(file);
       });
     });
     setTimeout(() => {
