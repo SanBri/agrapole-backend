@@ -276,18 +276,15 @@ router.get("/pdfFile/all"),
     try {
       const pdfFiles = [];
       const folder = "./public/PDF/";
-      fs.readdir(
-        folder,
-        (err, files) => {
-          files.forEach((file) => {
-            console.log(file);
-            pdfFiles.push(file);
-          });
-        },
+      fs.readdir(folder, (err, files) => {
+        files.forEach((file) => {
+          console.log(file);
+          pdfFiles.push(file);
+        });
         (err) => {
           if (err) console.log("ERROR: " + err);
-        }
-      );
+        };
+      });
       res.json(pdfFiles);
     } catch (err) {
       console.erro(err.message);
