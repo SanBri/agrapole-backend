@@ -213,24 +213,24 @@ router.put("/pdfFile/:id", auth, async (req, res) => {
         }
       );
       console.log("Fichier créé");
-      const oldFile = await PDFCard.findById(req.params.id).select("PDF -_id");
-      console.log(oldFile.PDF);
-      if (!oldFile) {
-        console.log("Carte PDF introuvable");
-        return res.status(404).json({ msg: "Carte PDF introuvable" });
-      }
-      let filePath = `./public/PDF/${oldFile.PDF}`;
-      if (fs.existsSync(filePath)) {
-        fs.unlinkSync(filePath),
-          (err) => {
-            console.log(err);
-          };
-        res.send("Fichier supprimé");
-      } else {
-        console.error("Fichier introuvable");
-        res.send("Fichier introuvable");
-      }
     });
+    const oldFile = await PDFCard.findById(req.params.id).select("PDF -_id");
+    console.log(oldFile.PDF);
+    if (!oldFile) {
+      console.log("Carte PDF introuvable");
+      return res.status(404).json({ msg: "Carte PDF introuvable" });
+    }
+    let filePath = `./public/PDF/${oldFile.PDF}`;
+    if (fs.existsSync(filePath)) {
+      fs.unlinkSync(filePath),
+        (err) => {
+          console.log(err);
+        };
+      res.send("Fichier supprimé");
+    } else {
+      console.error("Fichier introuvable");
+      res.send("Fichier introuvable");
+    }
   } catch (err) {
     console.error(err.message);
     res.status(500).send("Server Error");
