@@ -285,7 +285,11 @@ router.get("/allPdfFile"),
           if (err) console.log("ERROR: " + err);
         };
       });
-      res.json(pdfFiles);
+
+      setTimeout(() => {
+        console.log("Terminé", files);
+        res.json(pdfFiles);
+      }, 5000);
     } catch (err) {
       console.erro(err.message);
       if (err.kind === "ObjectId") {
