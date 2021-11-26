@@ -280,16 +280,18 @@ router.get("/allPdfFile"),
         files.forEach((file) => {
           console.log(file);
           pdfFiles.push(file);
+          (err) => {
+            if (err) console.log("ERROR: " + err);
+          };
         });
-        (err) => {
-          if (err) console.log("ERROR: " + err);
-        };
       });
-
       setTimeout(() => {
-        console.log("Terminé", files);
+        console.log("2 secondes");
+      }, 2000);
+      setTimeout(() => {
+        console.log("Terminé", pdfFiles);
         res.json(pdfFiles);
-      }, 5000);
+      }, 4000);
     } catch (err) {
       console.erro(err.message);
       if (err.kind === "ObjectId") {
