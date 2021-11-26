@@ -268,4 +268,33 @@ router.delete("/:id", auth, async (req, res) => {
   }
 });
 
+// @route   GET api/pdfsCards/pdfFile/:PDF
+// @desc    Get a PDF File
+// @access  Public
+router.get("/pdfFile/all"),
+  async (req, res) => {
+    try {
+      const pdfFiles = [];
+      const folder = "./public/PDF/";
+      fs.readdir(
+        folder,
+        (err, files) => {
+          files.forEach((file) => {
+            console.log(file);
+            pdfFiles.push(file);
+          });
+        },
+        (err) => {
+          if (err) console.log("ERROR: " + err);
+        }
+      );
+      res.json(pdfFiles);
+    } catch (err) {
+      console.erro(err.message);
+      if (err.kind === "ObjectId") {
+        return res.status(404).json({ msg: "Les Fichiers sont introuvables" });
+      }
+    }
+  };
+
 export default router;
