@@ -268,26 +268,25 @@ router.put("/pdfFile/:id", auth, async (req, res) => {
 //   }
 // });
 
-// @route   DELETE api/pdfsCards/allPdfFile
+// @route   DELETE api/pdfCards/
 // @desc    DELETE all PDF Files
 // @access  Public
-router.delete("/allPdfFile"),
-  async (req, res) => {
-    try {
-      const folder = "./public/PDF/";
-      fs.readdir(folder, (err, files) => {
-        console.log(err);
-        files.forEach((file) => {
-          fs.unlinkSync(file);
-        });
+router.delete("/", async (req, res) => {
+  try {
+    const folder = "./public/PDF/";
+    fs.readdir(folder, (err, files) => {
+      console.log(err);
+      files.forEach((file) => {
+        fs.unlinkSync(file);
       });
-      res.send("Les fichiers ont été supprimés");
-    } catch (err) {
-      console.erro(err.message);
-      if (err.kind === "ObjectId") {
-        return res.status(404).json({ msg: "Les Fichiers sont introuvables" });
-      }
+    });
+    res.send("Les fichiers ont été supprimés");
+  } catch (err) {
+    console.erro(err.message);
+    if (err.kind === "ObjectId") {
+      return res.status(404).json({ msg: "Les Fichiers sont introuvables" });
     }
-  };
+  }
+});
 
 export default router;
