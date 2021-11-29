@@ -6,49 +6,6 @@ import Hero from "../../models/Hero.js";
 
 const router = express.Router();
 
-// @route   POST api/hero/
-// @desc    Add a Hero
-// @access  Private
-// router.post(
-//   "/",
-//   [
-//     auth,
-//     [
-//       check("title", "Veuillez rédiger un titre").not().isEmpty(),
-//       check("catchphrase", "Veuillez rédiger un sous-titre").not().isEmpty(),
-//       check("description", "Veuillez rédiger une description").not().isEmpty(),
-//       check(
-//         "description",
-//         "La description est trop longue (830 caractères maximums)"
-//       ).isLength({
-//         max: 830,
-//       }),
-//     ],
-//   ],
-//   async (req, res) => {
-//     const errors = validationResult(req);
-//     if (!errors.isEmpty()) {
-//       return res.status(400).json({ errors: errors.array() });
-//     }
-//     const { title, catchphrase, description } = req.body;
-//     const heroFields = {};
-//     heroFields.title = title;
-//     heroFields.catchphrase = catchphrase;
-//     heroFields.description = description;
-//     if (title) heroFields.title = title;
-//     if (catchphrase) heroFields.catchphrase = catchphrase;
-//     if (description) heroFields.description = description;
-//     try {
-//       const newHero = new Hero(heroFields);
-//       await newHero.save();
-//       res.json(newHero);
-//     } catch (err) {
-//       console.error(err.message);
-//       res.status(500).send("Server Error");
-//     }
-//   }
-// );
-
 // @route   GET api/hero/
 // @desc    Get Hero
 // @access  Public
