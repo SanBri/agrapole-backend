@@ -9,6 +9,7 @@ import pdfCardsRoute from "./routes/api/pdfCards.js";
 import pdfFilesRoute from "./routes/api/pdfFiles.js";
 import heroRoute from "./routes/api/hero.js";
 import partnersRoute from "./routes/api/partners.js";
+import gradeRoute from "./routes/api/grade.js";
 
 dotenv.config();
 
@@ -42,3 +43,4 @@ app.use("/api/pdfCards", pdfCardsRoute);
 app.use("/api/pdfFiles", pdfFilesRoute);
 app.use("/api/hero", heroRoute);
 app.use("/api/partners", partnersRoute);
+app.use("/api/grade", gradeRoute);
