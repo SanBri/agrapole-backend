@@ -31,6 +31,11 @@ router.put(
     auth,
     [
       check("title", "Veuillez rédiger un titre").not().isEmpty(),
+      check("title", "La titre est trop long (40 caractères maximum)").isLength(
+        {
+          max: 40,
+        }
+      ),
       check("average", "Veuillez indiquer une moyenne")
         .not()
         .isEmpty()
