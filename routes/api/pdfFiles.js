@@ -123,11 +123,16 @@ router.delete("/:id", auth, async (req, res) => {
       }
     }
     console.log(`Recherche du fichier "${pdfCard.PDF}"`);
-    let file = `frseaura/PDF/${pdfCard.PDF}`;
-    cloudinary.uploader.destroy(file, function (result) {
-      console.log(result);
-      console.log("OK");
-    });
+    let fileName = pdfCard.PDF.replace(/\.[^/.]+$/, ""); // Remove extension
+    let file = `frseaura/PDF/${fileName}`;
+    cloudinary.v2.uploader.destroy(
+      file,
+      { resource_type: "image" },
+      (error, result) => {
+        console.log(result, error);
+      }
+    );
+
     if (fs.existsSync(file)) {
       console.log(`${file} trouvé`);
       fs.unlinkSync(file),
