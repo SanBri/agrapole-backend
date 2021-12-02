@@ -162,7 +162,8 @@ router.delete("/:id", auth, async (req, res) => {
       });
     }
     let file = `./public/PDF/${pdfCard.PDF}`;
-    let cloudinaryFile = `frseaura/PDF/${pdfCard.PDF}`;
+    let simpleFileName = pdfCard.PDF.replace(/\.[^/.]+$/, ""); // Remove extension
+    let cloudinaryFile = `frseaura/PDF/${simpleFileName}`;
     console.log(`cloudinaryFile = `, cloudinaryFile);
     cloudinary.v2.uploader.destroy(cloudinaryFile, (error, result) => {
       console.log(result, error);
