@@ -49,7 +49,7 @@ router.post("/", auth, (req, res) => {
           if (err) console.log("ERROR: " + err);
         }
       );
-      let simpleFileName = req.file.originalname.replace(/\.[^/.]+$/, ""); // Remove extension
+      let simpleFileName = req.file.newFileName.replace(/\.[^/.]+$/, ""); // Remove extension
       cloudinary.uploader.upload(
         finalFileName,
         (result) => {
