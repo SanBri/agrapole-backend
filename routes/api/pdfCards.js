@@ -163,14 +163,11 @@ router.delete("/:id", auth, async (req, res) => {
     }
     let file = `./public/PDF/${pdfCard.PDF}`;
     let cloudinaryFile = `frseaura/PDF/${pdfCard.PDF}`;
-    cloudinary.uploader.destroy(
-      cloudinaryFile,
-      { type: "upload", resource_type: "image" },
-      (result) => {
-        console.log(`ClOUDINARY : ${cloudinaryFile} supprimé`);
-        return result;
-      }
-    );
+    console.log(`cloudinaryFile = `, cloudinaryFile);
+    cloudinary.v2.uploader.destroy(cloudinaryFile, (error, result) => {
+      console.log(result, error);
+      console.log(`ClOUDINARY : ${cloudinaryFile} supprimé`);
+    });
     if (fs.existsSync(file)) {
       fs.unlinkSync(file),
         (err) => {
