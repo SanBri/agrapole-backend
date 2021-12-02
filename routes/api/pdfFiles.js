@@ -51,7 +51,7 @@ router.post("/", auth, (req, res) => {
       );
       let simpleFileName = req.body.newFileName.replace(/\.[^/.]+$/, ""); // Remove extension
       cloudinary.uploader.upload(
-        finalFileName,
+        req.file,
         (result) => {
           console.log(result);
           res.send("File uploaded");

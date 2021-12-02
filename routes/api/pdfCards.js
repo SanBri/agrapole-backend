@@ -161,14 +161,14 @@ router.delete("/:id", auth, async (req, res) => {
         errors: [{ msg: "La carte PDF est introuvable" }],
       });
     }
-    let file = `./public/PDF/${pdfCard.PDF}`;
     let simpleFileName = pdfCard.PDF.replace(/\.[^/.]+$/, ""); // Remove extension
     let cloudinaryFile = `frseaura/PDF/${simpleFileName}`;
-    console.log(`cloudinaryFile = `, cloudinaryFile);
     cloudinary.v2.uploader.destroy(cloudinaryFile, (error, result) => {
       console.log(result, error);
       console.log(`ClOUDINARY : ${cloudinaryFile} supprimé`);
     });
+    let file = `./public/PDF/${pdfCard.PDF}`;
+
     if (fs.existsSync(file)) {
       fs.unlinkSync(file),
         (err) => {
