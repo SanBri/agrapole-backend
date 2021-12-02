@@ -1,6 +1,7 @@
 import express from "express";
 import { check, validationResult } from "express-validator";
 import fs from "fs";
+import cloudinary from "cloudinary";
 
 import auth from "../../middleware/auth.js";
 import PDFCard from "../../models/PDFCard.js";
@@ -161,6 +162,15 @@ router.delete("/:id", auth, async (req, res) => {
       });
     }
     let file = `./public/PDF/${pdfCard.PDF}`;
+    let cloudinaryFile = `frseaura/PDF/${pdfCard.PDF}`;
+    cloudinary.uploader.destroy(
+      cloudinaryFile,
+      { type: "upload", resource_type: "image" },
+      (result) => {
+        console.log(`ClOUDINARY : ${cloudinaryFile} supprimé`);
+        return result;
+      }
+    );
     if (fs.existsSync(file)) {
       fs.unlinkSync(file),
         (err) => {
