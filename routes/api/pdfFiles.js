@@ -49,14 +49,14 @@ router.post("/", auth, (req, res) => {
           if (err) console.log("ERROR: " + err);
         }
       );
+      let simpleFileName = req.file.originalname.replace(/\.[^/.]+$/, ""); // Remove extension
       cloudinary.uploader.upload(
         finalFileName,
         (result) => {
           console.log(result);
-          console.log(`${req.body.newFileName} créé`);
           res.send("File uploaded");
         },
-        { public_id: `frseaura/PDF/${req.body.newFileName}` }
+        { public_id: `frseaura/PDF/${simpleFileName}` }
       );
     });
   } catch (err) {
@@ -123,7 +123,6 @@ router.delete("/:id", auth, async (req, res) => {
       }
     }
     console.log(`Recherche du fichier "${pdfCard.PDF}"`);
-    let fileName = pdfCard.PDF.replace(/\.[^/.]+$/, ""); // Remove extension
     let file = `frseaura/PDF/${fileName}`;
     cloudinary.v2.uploader.destroy(
       file,
