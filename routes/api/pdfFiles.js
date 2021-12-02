@@ -1,9 +1,11 @@
 import express from "express";
 import fs from "fs";
 import multer from "multer";
+import cloudinary from "cloudinary";
 
 import auth from "../../middleware/auth.js";
 import PDFCard from "../../models/PDFCard.js";
+import Hero from "../../models/Hero.js";
 
 const router = express.Router();
 
@@ -47,7 +49,11 @@ router.post("/", auth, (req, res) => {
           if (err) console.log("ERROR: " + err);
         }
       );
-      res.send("File uploaded");
+      cloudinary.uploader.upload(finalFileName, (result) => {
+        console.log(result);
+        console.log(`${req.body.newFileName} créé`);
+        res.send("File uploaded");
+      });
     });
   } catch (err) {
     console.error(err.message);
@@ -100,12 +106,17 @@ router.post("/", auth, (req, res) => {
 router.delete("/:id", auth, async (req, res) => {
   try {
     console.log("Recherche de la carte PDF...");
-    const pdfCard = await PDFCard.findById(req.params.id);
+    let pdfCard = await PDFCard.findById(req.params.id);
     if (!pdfCard) {
-      console.log("La carte PDF est introuvable");
-      return res.status(404).json({
-        errors: [{ msg: "La carte PDF est introuvable" }],
-      });
+      console.log("Carte PDF introuvable... Recherche Hero...");
+      pdfCard = await Hero.findById(req.params.id);
+      console.log(`Nom du fichier PDF du Hero trouvé :`, pdfCard.PDF);
+      if (!pdfCard) {
+        console.log("La carte PDF est introuvable");
+        return res.status(404).json({
+          errors: [{ msg: "La carte PDF est introuvable" }],
+        });
+      }
     }
     console.log(`Recherche du fichier "${pdfCard.PDF}"`);
     let file = `./public/PDF/${pdfCard.PDF}`;
