@@ -49,11 +49,15 @@ router.post("/", auth, (req, res) => {
           if (err) console.log("ERROR: " + err);
         }
       );
-      cloudinary.uploader.upload(finalFileName, (result) => {
-        console.log(result);
-        console.log(`${req.body.newFileName} créé`);
-        res.send("File uploaded");
-      });
+      cloudinary.uploader.upload(
+        finalFileName,
+        (result) => {
+          console.log(result);
+          console.log(`${req.body.newFileName} créé`);
+          res.send("File uploaded");
+        },
+        { folder: "./frseaura/PDF/", public_id: req.body.newFileName }
+      );
     });
   } catch (err) {
     console.error(err.message);
