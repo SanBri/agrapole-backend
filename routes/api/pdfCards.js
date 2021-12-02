@@ -165,18 +165,14 @@ router.delete("/:id", auth, async (req, res) => {
     let cloudinaryFile = `frseaura/PDF/${simpleFileName}`;
     cloudinary.v2.uploader.destroy(cloudinaryFile, (error, result) => {
       console.log(result, error);
-      console.log(`ClOUDINARY : ${cloudinaryFile} supprimé`);
+      console.log(`Fichier "${cloudinaryFile}" supprimé`);
     });
-    let file = `./public/PDF/${pdfCard.PDF}`;
-
-    if (fs.existsSync(file)) {
-      fs.unlinkSync(file),
+    let herokuFile = `./public/PDF/${pdfCard.PDF}`;
+    if (fs.existsSync(herokuFile)) {
+      fs.unlinkSync(herokuFile),
         (err) => {
           console.log(err);
         };
-      console.log(`Fichier ${pdfCard.PDF} supprimé`);
-    } else {
-      console.log("Fichier introuvable");
     }
     await pdfCard.remove();
     res.json("Carte PDF supprimée");

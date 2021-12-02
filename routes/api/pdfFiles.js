@@ -14,7 +14,9 @@ const router = express.Router();
 // @access  Public
 router.get("/:PDF", async (req, res) => {
   try {
-    var data = fs.readFileSync(`./public/PDF/${req.params.PDF}`);
+    var data = fs.readFileSync(
+      `https://res.cloudinary.com/hcn0tdlxx/image/upload/v1638445862/frseaura/PDF/${req.params.PDF}`
+    );
     res.contentType("application/pdf");
     res.send(data);
   } catch (err) {
@@ -51,7 +53,7 @@ router.post("/", auth, (req, res) => {
       );
       let simpleFileName = req.body.newFileName.replace(/\.[^/.]+$/, ""); // Remove extension
       cloudinary.uploader.upload(
-        req.file,
+        finalFileName,
         (result) => {
           console.log(result);
           res.send("File uploaded");
@@ -65,56 +67,15 @@ router.post("/", auth, (req, res) => {
   }
 });
 
-// @route   PUT api/pdfFiles/:id
-// @desc    Replace a PDF File
-// @access  Private
-// router.put("/:id", auth, async (req, res) => {
-//   try {
-//     upload(req, res, () => {
-//       let finalFileName = `./public/PDF/${req.body.newFileName}`;
-//       fs.rename(
-//         `./public/PDF/${req.file.originalname}`,
-//         finalFileName,
-//         (err) => {
-//           if (err) console.log("ERROR: " + err);
-//         }
-//       );
-//       console.log("Fichier créé");
-//     });
-// const oldFile = await PDFCard.findById(req.params.id).select("PDF -_id");
-//   console.log(oldFile.PDF);
-//   if (!oldFile) {
-//     console.log("Carte PDF introuvable");
-//     return res.status(404).json({ msg: "Carte PDF introuvable" });
-//   }
-//   let filePath = `./public/PDF/${oldFile.PDF}`;
-//   if (fs.existsSync(filePath)) {
-//     fs.unlinkSync(filePath),
-//       (err) => {
-//         console.log(err);
-//       };
-//     res.send("Fichier supprimé");
-//   } else {
-//     console.error("Fichier introuvable");
-//     res.send("Fichier introuvable");
-//   }
-//   } catch (err) {
-//     console.error(err.message);
-//     res.status(500).send("Server Error");
-//   }
-// });
-
 // @route   DELETE api/pdfFiles/:id
 // @desc    Delete a PDF File (Heroku PUT route bug)
 // @access  Private
 router.delete("/:id", auth, async (req, res) => {
   try {
-    console.log("Recherche de la carte PDF...");
     let pdfCard = await PDFCard.findById(req.params.id);
     if (!pdfCard) {
       console.log("Carte PDF introuvable... Recherche Hero...");
       pdfCard = await Hero.findById(req.params.id);
-      console.log(`Nom du fichier PDF du Hero trouvé :`, pdfCard.PDF);
       if (!pdfCard) {
         console.log("La carte PDF est introuvable");
         return res.status(404).json({
@@ -122,25 +83,18 @@ router.delete("/:id", auth, async (req, res) => {
         });
       }
     }
-    console.log(`Recherche du fichier "${pdfCard.PDF}"`);
-    let file = `frseaura/PDF/${pdfCard.PDF}`;
-    cloudinary.uploader.destroy(
-      public_id,
-      { type: "upload", resource_type: "image" },
-      (result) => {
-        return result;
-      }
-    );
-    if (fs.existsSync(file)) {
-      console.log(`${file} trouvé`);
-      fs.unlinkSync(file),
+    let simpleFileName = pdfCard.PDF.replace(/\.[^/.]+$/, ""); // Remove extension
+    let cloudinaryFile = `frseaura/PDF/${simpleFileName}`;
+    cloudinary.v2.uploader.destroy(cloudinaryFile, (error, result) => {
+      console.log(result, error);
+      console.log(`Fichier "${cloudinaryFile}" supprimé`);
+    });
+    let herokuFile = `./public/PDF/${pdfCard.PDF}`;
+    if (fs.existsSync(herokuFile)) {
+      fs.unlinkSync(herokuFile),
         (err) => {
           console.log(err);
         };
-      console.log(`Fichier "${pdfCard.PDF}" supprimé `);
-      res.send(`Le fichier "${pdfCard.PDF}" a bien été supprimé`);
-    } else {
-      console.log("Fichier introuvable");
     }
   } catch (err) {
     console.error(err.message);
