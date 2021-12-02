@@ -125,7 +125,7 @@ router.delete("/:id", auth, async (req, res) => {
     console.log(`Recherche du fichier "${pdfCard.PDF}"`);
     let file = `frseaura/PDF/${fileName}`;
     cloudinary.v2.uploader.destroy(
-      file,
+      "pdf_exemple_lnhcc9",
       { resource_type: "image" },
       (error, result) => {
         console.log(result, error);
