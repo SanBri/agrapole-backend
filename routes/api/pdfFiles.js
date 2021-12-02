@@ -56,7 +56,7 @@ router.post("/", auth, (req, res) => {
           console.log(`${req.body.newFileName} créé`);
           res.send("File uploaded");
         },
-        { folder: "./frseaura/PDF/", public_id: req.body.newFileName }
+        { public_id: `frseaura/PDF/${req.body.newFileName}` }
       );
     });
   } catch (err) {
