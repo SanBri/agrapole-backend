@@ -123,7 +123,10 @@ router.delete("/:id", auth, async (req, res) => {
       }
     }
     console.log(`Recherche du fichier "${pdfCard.PDF}"`);
-    let file = `./public/PDF/${pdfCard.PDF}`;
+    let file = `/frseaura/PDF/${pdfCard.PDF}`;
+    cloudinary.v2.uploader.destroy(file, (error, result) => {
+      console.log(result, error);
+    });
     if (fs.existsSync(file)) {
       console.log(`${file} trouvé`);
       fs.unlinkSync(file),
