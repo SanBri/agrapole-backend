@@ -39,6 +39,7 @@ router.put(
       ).isLength({
         max: 830,
       }),
+      check("PDF", "Veuillez importer un fichier PDF").not().isEmpty(),
     ],
   ],
   async (req, res) => {
@@ -46,14 +47,16 @@ router.put(
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
     }
-    const { title, catchphrase, description } = req.body;
+    const { title, catchphrase, description, PDF } = req.body;
     const heroFields = {};
     heroFields.title = title;
     heroFields.catchphrase = catchphrase;
     heroFields.description = description;
+    heroFields.PDF = PDF;
     if (title) heroFields.title = title;
     if (catchphrase) heroFields.catchphrase = catchphrase;
     if (description) heroFields.description = description;
+    if (PDF) heroFields.PDF = PDF;
 
     try {
       const hero = await Hero.findOneAndUpdate(

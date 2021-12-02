@@ -15,6 +15,10 @@ const HeroSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  PDF: {
+    type: String,
+    required: true,
+  },
   description: {
     type: String,
   },
