@@ -9,22 +9,6 @@ import Hero from "../../models/Hero.js";
 
 const router = express.Router();
 
-// @route   GET api/pdfFiles/:PDF
-// @desc    Get a PDF File
-// @access  Public
-router.get("/:PDF", async (req, res) => {
-  try {
-    var data = fs.readFileSync(
-      `https://res.cloudinary.com/hcn0tdlxx/image/upload/v1638445862/frseaura/PDF/${req.params.PDF}`
-    );
-    res.contentType("application/pdf");
-    res.send(data);
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send("Server Error");
-  }
-});
-
 const storage = multer.diskStorage({
   destination: "./public/PDF/",
   filename: (req, file, cb) => {
