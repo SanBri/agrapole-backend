@@ -5,7 +5,6 @@ const GradeSchema = new mongoose.Schema({
     type: String,
     required: true,
     unique: true,
-    default: "grade",
   },
   title: {
     type: String,
