@@ -7,33 +7,52 @@ import Grade from "../../models/Grade.js";
 const router = express.Router();
 
 // @route   GET api/grade/
-// @desc    Get Grade
+// @desc    Get All Grades
 // @access  Public
 router.get("/", async (_, res) => {
   try {
-    const grade = await Grade.findOne().where({ name: "grade" });
-    if (!grade) {
-      res.status(404).send("Moyenne introuvable");
+    const grades = await Grade.find();
+    if (!grades) {
+      res.status(404).send("Moyennes introuvables");
     }
-    res.status(200).send(grade);
+    res.status(200).send(grades);
   } catch (err) {
     console.error(err.message);
     res.status(500).send("Server Error");
   }
 });
 
-// @route   PUT api/grade/
+// @route   GET api/grade/:id
+// @desc    Get a Grade By ID
+// @access  Public
+router.get("/:id", async (req, res) => {
+  try {
+    const grade = await Grade.findOne().where({ _id: req.params.id });
+    if (!grade) {
+      res.status(404).send("Moyenne introuvable");
+    }
+    res.status(200).send(grade);
+  } catch (err) {
+    console.error(err.message);
+    if (err.kind == "ObjectId") {
+      return res.status(404).json({ msg: "Moyenne introuvable" });
+    }
+    res.status(500).send("Server Error");
+  }
+});
+
+// @route   PUT api/grade/:name
 // @desc    Edit grade
 // @access  Private
 router.put(
-  "/",
+  "/:name",
   [
     auth,
     [
       check("title", "Veuillez rédiger un titre").not().isEmpty(),
-      check("title", "La titre est trop long (40 caractères maximum)").isLength(
+      check("title", "La titre est trop long (50 caractères maximum)").isLength(
         {
-          max: 40,
+          max: 50,
         }
       ),
       check("average", "Veuillez indiquer une moyenne")
@@ -83,7 +102,7 @@ router.put(
     if (scale) gradeFields.scale = scale;
     try {
       const grade = await Grade.findOneAndUpdate(
-        { name: "grade" },
+        { name: req.params.name },
         { $set: gradeFields },
         { new: true }
       );
