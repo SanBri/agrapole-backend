@@ -68,7 +68,7 @@ router.delete("/:id", auth, async (req, res) => {
         errors: [{ msg: "Le partenaire est introuvable" }],
       });
     }
-    let simpleFileName = req.body.newFileName.replace(/\.[^/.]+$/, ""); // Remove extension
+    let simpleFileName = partner.image.replace(/\.[^/.]+$/, ""); // Remove extension
     let cloudinaryFile = `frseaura/partners/${simpleFileName}`;
     cloudinary.v2.uploader.destroy(cloudinaryFile, (error, result) => {
       console.log(result, error);
