@@ -2,6 +2,8 @@ import express from "express";
 import { check, validationResult } from "express-validator";
 import fs from "fs";
 import multer from "multer";
+import cloudinary from "cloudinary";
+
 import path from "path";
 
 import auth from "../../middleware/auth.js";
@@ -66,9 +68,15 @@ router.delete("/:id", auth, async (req, res) => {
         errors: [{ msg: "Le partenaire est introuvable" }],
       });
     }
-    let file = `./public/partners/${partner.image}`;
-    if (fs.existsSync(file)) {
-      fs.unlinkSync(file),
+    let simpleFileName = req.body.newFileName.replace(/\.[^/.]+$/, ""); // Remove extension
+    let cloudinaryFile = `frseaura/partners/${simpleFileName}`;
+    cloudinary.v2.uploader.destroy(cloudinaryFile, (error, result) => {
+      console.log(result, error);
+      console.log(`Fichier "${cloudinaryFile}" supprimé`);
+    });
+    let herokuFile = `./public/partners/${partner.image}`;
+    if (fs.existsSync(herokuFile)) {
+      fs.unlinkSync(herokuFile),
         (err) => {
           console.log(err);
         };
@@ -111,7 +119,15 @@ router.post("/logoFile/", auth, (req, res) => {
           if (err) console.log("ERROR: " + err);
         }
       );
-      res.send("File uploaded");
+      let simpleFileName = req.body.newFileName.replace(/\.[^/.]+$/, ""); // Remove extension
+      cloudinary.uploader.upload(
+        finalFileName,
+        (result) => {
+          console.log(result);
+          res.send("File uploaded");
+        },
+        { public_id: `frseaura/partners/${simpleFileName}` }
+      );
     });
   } catch (err) {
     console.error(err.message);
