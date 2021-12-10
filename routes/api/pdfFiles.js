@@ -27,8 +27,8 @@ const upload = multer({
 router.post("/", auth, (req, res) => {
   try {
     upload(req, res, () => {
-      console.log(req);
-      let finalFileName = `./public/PDF/${req.body.newFileName}`;
+      console.log("NEWFILENAME ICI =", req.body.newFileName);
+      // let finalFileName = `./public/PDF/${req.body.newFileName}`;
       // fs.rename(
       //   `./public/PDF/${req.file.originalname}`,
       //   finalFileName,
@@ -38,7 +38,7 @@ router.post("/", auth, (req, res) => {
       // );
       let simpleFileName = req.body.newFileName.replace(/\.[^/.]+$/, ""); // Remove extension
       cloudinary.uploader.upload(
-        finalFileName,
+        req.body.newFileName,
         (result) => {
           console.log(result);
           res.send("File uploaded");
