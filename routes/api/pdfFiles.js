@@ -18,7 +18,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({
   storage: storage,
-  limits: { fileSize: 1000000 },
+  limits: { fileSize: 10000000 },
 }).single("pdfFile");
 
 // @route   POST api/pdfFiles/
@@ -27,15 +27,14 @@ const upload = multer({
 router.post("/", auth, (req, res) => {
   try {
     upload(req, res, () => {
-      console.log("NEWFILENAME ICI =", req.body.newFileName);
-      // let finalFileName = `./public/PDF/${req.body.newFileName}`;
-      // fs.rename(
-      //   `./public/PDF/${req.file.originalname}`,
-      //   finalFileName,
-      //   (err) => {
-      //     if (err) console.log("ERROR: " + err);
-      //   }
-      // );
+      let finalFileName = `./public/PDF/${req.body.newFileName}`;
+      fs.rename(
+        `./public/PDF/${req.file.originalname}`,
+        finalFileName,
+        (err) => {
+          if (err) console.log("ERROR: " + err);
+        }
+      );
       let simpleFileName = req.body.newFileName.replace(/\.[^/.]+$/, ""); // Remove extension
       cloudinary.uploader.upload(
         req.body.newFileName,
