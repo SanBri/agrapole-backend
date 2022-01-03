@@ -10,6 +10,7 @@ import pdfFilesRoute from "./routes/api/pdfFiles.js";
 import heroRoute from "./routes/api/hero.js";
 import partnersRoute from "./routes/api/partners.js";
 import gradeRoute from "./routes/api/grade.js";
+import footerRoute from "./routes/api/footer.js";
 
 dotenv.config();
 
@@ -44,3 +45,4 @@ app.use("/api/pdfFiles", pdfFilesRoute);
 app.use("/api/hero", heroRoute);
 app.use("/api/partners", partnersRoute);
 app.use("/api/grade", gradeRoute);
+app.use("/api/footer", footerRoute);
