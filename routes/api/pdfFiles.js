@@ -27,23 +27,28 @@ const upload = multer({
 router.post("/", auth, (req, res) => {
   try {
     upload(req, res, () => {
+      console.log("Request :", req);
       let finalFileName = `./public/PDF/${req.body.newFileName}`;
-      fs.rename(
-        `./public/PDF/${req.file.originalname}`,
-        finalFileName,
-        (err) => {
-          if (err) console.log("ERROR: " + err);
-        }
-      );
-      let simpleFileName = req.body.newFileName.replace(/\.[^/.]+$/, ""); // Remove extension
-      cloudinary.uploader.upload(
-        finalFileName,
-        (result) => {
-          console.log(result);
-          res.send("File uploaded");
-        },
-        { public_id: `frseaura/PDF/${simpleFileName}` }
-      );
+      if (req && req.file) {
+        fs.rename(
+          `./public/PDF/${req.file.originalname}`,
+          finalFileName,
+          (err) => {
+            if (err) console.error("ERROR: " + err);
+          }
+        );
+        let simpleFileName = req.body.newFileName.replace(/\.[^/.]+$/, ""); // Remove extension
+        cloudinary.uploader.upload(
+          finalFileName,
+          (result) => {
+            console.log(result);
+            res.send("File uploaded");
+          },
+          { public_id: `frseaura/PDF/${simpleFileName}` }
+        );
+      } else {
+        console.error("Fichier introuvable dans la requête.");
+      }
     });
   } catch (err) {
     console.error(err.message);
